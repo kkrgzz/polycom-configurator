@@ -13,7 +13,7 @@
         </li>
         <li class="nav-item" role="presentation">
             <button class="nav-link fw-bold" id="config-tab" data-bs-toggle="tab" data-bs-target="#config-pane"
-                type="button" onclick="refreshConfigUI()">
+                type="button">
                 <i class="bi bi-phone-fill me-2"></i>2. Configure Phone
             </button>
         </li>
@@ -26,12 +26,10 @@
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <h5 class="text-muted">Database of Extensions</h5>
                 <div class="d-flex gap-2">
-                    <input type="file" id="importFile" accept=".json" style="display: none;"
-                        onchange="importUsers(this)">
-                    <button class="btn btn-outline-secondary btn-sm"
-                        onclick="document.getElementById('importFile').click()">Import JSON</button>
-                    <button class="btn btn-outline-secondary btn-sm" onclick="exportUsers()">Export JSON</button>
-                    <button class="btn btn-primary btn-sm fw-bold" onclick="openModal()">+ Add User</button>
+                    <input type="file" id="importFile" accept=".json" style="display: none;">
+                    <button class="btn btn-outline-secondary btn-sm" data-action="import-pool">Import JSON</button>
+                    <button class="btn btn-outline-secondary btn-sm" data-action="export-pool">Export JSON</button>
+                    <button class="btn btn-primary btn-sm fw-bold" data-action="add-user">+ Add User</button>
                 </div>
             </div>
 
@@ -83,7 +81,7 @@
                         </div>
                         <div class="card-body">
                             <label class="small text-muted mb-1">Select User from Pool</label>
-                            <select class="form-select mb-3" id="mainUserSelect" onchange="setMainUser()">
+                            <select class="form-select mb-3" id="mainUserSelect">
                                 <option value="">-- Select Owner --</option>
                             </select>
 
@@ -98,7 +96,7 @@
                     <div class="card shadow-sm border-0">
                         <div class="card-header bg-white d-flex justify-content-between align-items-center">
                             <span class="fw-bold small text-muted">ASSIGNED KEYS</span>
-                            <button class="btn btn-sm btn-outline-primary" onclick="openKeyPicker()">+ Add Keys</button>
+                            <button class="btn btn-sm btn-outline-primary" data-action="add-keys">+ Add Keys</button>
                         </div>
                         <div class="card-body p-0">
                             <ul class="list-group list-group-flush" id="assignedKeysList">
@@ -107,7 +105,7 @@
                             <div id="keysEmpty" class="text-center py-3 text-muted small">No keys assigned.</div>
                         </div>
                         <div class="card-footer bg-white">
-                            <button class="btn btn-success w-100 fw-bold" onclick="generateConfig()">
+                            <button class="btn btn-success w-100 fw-bold" data-action="generate-config">
                                 <i class="bi bi-download me-2"></i>Generate Config
                             </button>
                         </div>
@@ -157,8 +155,8 @@
                         </div>
                         <!-- Controls -->
                         <div class="phone-controls">
-                            <button class="btn btn-light btn-page" onclick="changePage(-1)">Prev</button>
-                            <button class="btn btn-light btn-page" onclick="changePage(1)">Next</button>
+                            <button class="btn btn-light btn-page" data-action="prev-page">Prev</button>
+                            <button class="btn btn-light btn-page" data-action="next-page">Next</button>
                         </div>
                     </div>
                 </div>
@@ -174,7 +172,7 @@
             <div class="modal-header">
                 <h6 class="modal-title fw-bold">Select Users to Add</h6>
                 <div class="form-check me-auto ms-3">
-                    <input class="form-check-input" type="checkbox" id="selectAllKeysCheckbox" onclick="toggleSelectAllKeys()">
+                    <input class="form-check-input" type="checkbox" id="selectAllKeysCheckbox">
                     <label class="form-check-label small text-muted" for="selectAllKeysCheckbox">
                         Select All
                     </label>
@@ -187,8 +185,7 @@
                 </div>
             </div>
             <div class="modal-footer bg-light">
-                <button type="button" class="btn btn-primary fw-bold w-100" onclick="confirmAddKeys()">Add
-                    Selected</button>
+                <button type="button" class="btn btn-primary fw-bold w-100" data-action="confirm-add-keys">Add Selected</button>
             </div>
         </div>
     </div>

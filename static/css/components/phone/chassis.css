@@ -1,0 +1,96 @@
+/**
+ * Phone Chassis Styles
+ * Physical phone appearance and layout
+ */
+
+/* Phone wrapper */
+.phone-wrapper {
+    position: sticky;
+    top: 20px;
+    background: #262626;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 20px 50px -10px rgba(0, 0, 0, 0.6);
+    border-bottom: 4px solid #1a1a1a;
+    width: 100%;
+}
+
+.phone-logo {
+    text-align: center;
+    color: #d1d5db;
+    font-size: 0.75rem;
+    margin-bottom: 10px;
+    opacity: 0.7;
+    letter-spacing: 1px;
+}
+
+.phone-layout-row {
+    display: flex;
+    justify-content: center;
+    align-items: stretch;
+    gap: 6px;
+}
+
+/* Physical buttons column */
+.physical-col {
+    display: flex;
+    flex-direction: column;
+    width: 24px;
+}
+
+.p-spacer-top {
+    height: calc(var(--header-height) + var(--screen-border));
+}
+
+.p-spacer-bottom {
+    height: calc(var(--footer-height) + var(--screen-border));
+}
+
+.buttons-zone {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+    padding: 4px 0;
+}
+
+.p-btn {
+    width: 20px;
+    height: 10px;
+    background: linear-gradient(to bottom, #404040, #171717);
+    border: 1px solid #000;
+    border-radius: 2px;
+    box-shadow: 0 1px 1px rgba(255, 255, 255, 0.1) inset;
+}
+
+.p-led {
+    width: 6px;
+    height: 3px;
+    background: #333;
+    margin-bottom: 2px;
+    border-radius: 1px;
+}
+
+.p-btn-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Controls */
+.phone-controls {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 15px;
+    background: #e5e5e5;
+    padding: 5px;
+    border-radius: 50px;
+}
+
+.btn-page {
+    border-radius: 50px;
+    font-size: 0.8rem;
+    font-weight: bold;
+    width: 100px;
+}

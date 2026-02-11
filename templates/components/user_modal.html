@@ -31,7 +31,7 @@
                     <thead class="bg-light text-uppercase small text-muted">
                         <tr>
                             <th class="ps-4" width="5%">
-                                <input type="checkbox" id="selectAllCheckbox" onclick="toggleSelectAll()" title="Select All">
+                                <input type="checkbox" id="selectAllCheckbox" title="Select All">
                             </th>
                             <th width="25%">Display Name</th>
                             <th width="15%">Extension</th>
@@ -54,7 +54,7 @@
         </div>
         <div class="card-footer bg-white small text-muted d-flex justify-content-between align-items-center">
             <span>Total Users: <span id="userCount">0</span></span>
-            <button id="deleteSelectedBtn" class="btn btn-sm btn-danger" onclick="deleteSelected()" style="display: none;">
+            <button id="deleteSelectedBtn" class="btn btn-sm btn-danger" style="display: none;">
                 <i class="bi bi-trash me-1"></i>Delete Selected (<span id="selectedCount">0</span>)
             </button>
         </div>
@@ -98,7 +98,7 @@
             </div>
             <div class="modal-footer bg-light">
                 <button type="button" class="btn btn-link text-muted text-decoration-none" data-bs-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-primary px-4 fw-bold" onclick="saveUser()">Save User</button>
+                <button type="button" class="btn btn-primary px-4 fw-bold" data-action="save-user">Save User</button>
             </div>
         </div>
     </div>

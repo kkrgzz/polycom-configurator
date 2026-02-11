@@ -1,0 +1,22 @@
+/**
+ * CSS Variables
+ * Global design tokens and constants
+ */
+
+:root {
+    /* Colors */
+    --primary-color: #4f46e5;
+    --bg-color: #f3f4f6;
+    --poly-screen-bg: linear-gradient(180deg, #111827 0%, #1e3a8a 100%);
+
+    /* Phone dimensions */
+    --header-height: 24px;
+    --footer-height: 26px;
+    --screen-border: 2px;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: var(--bg-color);
+    padding-bottom: 60px;
+}
