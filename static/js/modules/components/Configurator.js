@@ -210,6 +210,39 @@ class Configurator {
             spontaneous_calls: spontaneousCallsSelect?.value || 'enabled'
         };
     }
+
+    /**
+     * Set server configuration
+     * @param {Object} config - Server config object
+     */
+    setServerConfig(config) {
+        if (this.serverIpInput && config.ip !== undefined) {
+            this.serverIpInput.value = config.ip;
+        }
+        if (this.serverPortInput && config.port !== undefined) {
+            this.serverPortInput.value = config.port;
+        }
+        const ntpServerInput = document.getElementById('cfgNtpServer');
+        if (ntpServerInput && config.ntp_server !== undefined) {
+            ntpServerInput.value = config.ntp_server;
+        }
+    }
+
+    /**
+     * Set phone settings configuration
+     * @param {Object} settings - Phone settings object
+     */
+    setPhoneSettings(settings) {
+        const paginationSelect = document.getElementById('cfgPagination');
+        if (paginationSelect && settings.pagination !== undefined) {
+            paginationSelect.value = settings.pagination;
+        }
+
+        const spontaneousCallsSelect = document.getElementById('cfgSpontaneousCalls');
+        if (spontaneousCallsSelect && settings.spontaneous_calls !== undefined) {
+            spontaneousCallsSelect.value = settings.spontaneous_calls;
+        }
+    }
 }
 
 export default Configurator;

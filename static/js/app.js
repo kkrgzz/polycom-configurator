@@ -110,8 +110,8 @@ class App {
             });
         });
 
-        // Export pool button
-        const exportBtns = document.querySelectorAll('[data-action="export-pool"], [onclick*="exportUsers"]');
+        // Export config button
+        const exportBtns = document.querySelectorAll('[data-action="export-pool"], [data-action="quick-export"], [onclick*="exportUsers"]');
         exportBtns.forEach(btn => {
             btn.addEventListener('click', (e) => {
                 e.preventDefault();
@@ -119,8 +119,19 @@ class App {
             });
         });
 
-        // Import pool file input
+        // Import config button (triggers file input)
+        const importBtns = document.querySelectorAll('[data-action="import-pool"], [data-action="load-config"]');
         const importInput = getElement('importFile');
+        importBtns.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                if (importInput) {
+                    importInput.click();
+                }
+            });
+        });
+
+        // Import file input change handler
         if (importInput) {
             importInput.addEventListener('change', (e) => this.handleImport(e));
         }
@@ -212,18 +223,36 @@ class App {
     }
 
     /**
-     * Handle pool export
+     * Handle full configuration export
      */
     async handleExport() {
         try {
             const users = UserStore.getUsers();
             if (users.length === 0) {
-                alert('Pool is empty.');
+                alert('No users to export.');
                 return;
             }
 
-            const blob = await ApiService.exportPool(users);
-            await FileService.downloadBlob(blob, 'user_pool.json');
+            const config = ConfigStore.getState();
+
+            // Build complete configuration object
+            const fullConfig = {
+                version: '1.0',
+                users: users,
+                config: {
+                    mainUserId: config.mainUserId,
+                    assignedKeys: config.assignedKeys
+                },
+                serverSettings: this.configurator.getServerConfig(),
+                phoneSettings: this.configurator.getPhoneSettings()
+            };
+
+            // Create JSON blob and download
+            const jsonStr = JSON.stringify(fullConfig, null, 4);
+            const blob = new Blob([jsonStr], { type: 'application/json' });
+            await FileService.downloadBlob(blob, 'polycom_config.json');
+
+            console.log('Configuration exported successfully');
         } catch (error) {
             console.error('Export error:', error);
             alert('Export failed: ' + error.message);
@@ -231,7 +260,7 @@ class App {
     }
 
     /**
-     * Handle pool import
+     * Handle full configuration import
      * @param {Event} event - Change event from file input
      */
     async handleImport(event) {
@@ -241,17 +270,61 @@ class App {
         try {
             const data = await FileService.readJsonFile(file);
 
-            if (!Array.isArray(data)) {
-                alert('Invalid JSON format. Expected an array of users.');
+            // Check if it's the new full config format or legacy user array
+            const isFullConfig = data && typeof data === 'object' && data.version && data.users;
+            const isLegacyFormat = Array.isArray(data);
+
+            if (!isFullConfig && !isLegacyFormat) {
+                alert('Invalid configuration file format.');
                 return;
             }
 
-            if (confirm('Replace current pool with imported data?')) {
-                // Reset configuration
+            if (!confirm('Replace current configuration with imported data?')) {
+                return;
+            }
+
+            if (isFullConfig) {
+                // Import full configuration
+                console.log('Importing full configuration...');
+
+                // Reset stores
                 ConfigStore.reset();
 
-                // Replace users
+                // Import users
+                UserStore.setUsers(data.users || []);
+
+                // Import configuration
+                if (data.config) {
+                    if (data.config.mainUserId) {
+                        ConfigStore.setMainUser(data.config.mainUserId);
+                        // Update dropdown to reflect the main user
+                        if (this.configurator.mainUserSelect) {
+                            this.configurator.mainUserSelect.value = data.config.mainUserId;
+                        }
+                    }
+                    if (data.config.assignedKeys && Array.isArray(data.config.assignedKeys)) {
+                        ConfigStore.setAssignedKeys(data.config.assignedKeys);
+                    }
+                }
+
+                // Import server settings
+                if (data.serverSettings) {
+                    this.configurator.setServerConfig(data.serverSettings);
+                }
+
+                // Import phone settings
+                if (data.phoneSettings) {
+                    this.configurator.setPhoneSettings(data.phoneSettings);
+                }
+
+                console.log('Configuration imported successfully');
+                alert('Configuration imported successfully!');
+            } else if (isLegacyFormat) {
+                // Import legacy format (just user array)
+                console.log('Importing legacy user pool...');
+                ConfigStore.reset();
                 UserStore.setUsers(data);
+                alert('User pool imported successfully!');
             }
         } catch (error) {
             console.error('Import error:', error);
