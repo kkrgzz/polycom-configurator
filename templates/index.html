@@ -1,0 +1,198 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container-fluid">
+
+    <!-- TABS NAVIGATION -->
+    <ul class="nav nav-tabs mb-4" id="mainTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active fw-bold" id="pool-tab" data-bs-toggle="tab" data-bs-target="#pool-pane"
+                type="button">
+                <i class="bi bi-people-fill me-2"></i>1. Manage User Pool
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link fw-bold" id="config-tab" data-bs-toggle="tab" data-bs-target="#config-pane"
+                type="button" onclick="refreshConfigUI()">
+                <i class="bi bi-phone-fill me-2"></i>2. Configure Phone
+            </button>
+        </li>
+    </ul>
+
+    <div class="tab-content">
+
+        <!-- TAB 1: USER POOL (Existing Table Logic) -->
+        <div class="tab-pane fade show active" id="pool-pane">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 class="text-muted">Database of Extensions</h5>
+                <div class="d-flex gap-2">
+                    <input type="file" id="importFile" accept=".json" style="display: none;"
+                        onchange="importUsers(this)">
+                    <button class="btn btn-outline-secondary btn-sm"
+                        onclick="document.getElementById('importFile').click()">Import JSON</button>
+                    <button class="btn btn-outline-secondary btn-sm" onclick="exportUsers()">Export JSON</button>
+                    <button class="btn btn-primary btn-sm fw-bold" onclick="openModal()">+ Add User</button>
+                </div>
+            </div>
+
+            <div class="card border-0 shadow-sm">
+                <table class="table table-hover align-middle mb-0" id="userTable">
+                    <thead class="bg-light">
+                        <tr>
+                            <th class="ps-4">Name</th>
+                            <th>Ext</th>
+                            <th>Auth</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="userTableBody"></tbody>
+                </table>
+                <div id="emptyState" class="text-center py-5 d-none text-muted">No users found. Import or Add users.
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 2: CONFIGURATOR -->
+        <div class="tab-pane fade" id="config-pane">
+            <div class="row g-4">
+
+                <!-- LEFT: SETTINGS & SELECTION -->
+                <div class="col-lg-4">
+                    <!-- 1. Global Server Settings -->
+                    <div class="card shadow-sm border-0 mb-3">
+                        <div class="card-header bg-white fw-bold small text-muted">SERVER SETTINGS</div>
+                        <div class="card-body">
+                            <div class="row g-2">
+                                <div class="col-8">
+                                    <label class="small fw-bold text-muted">Server IP</label>
+                                    <input type="text" id="cfgServerIP" class="form-control form-control-sm"
+                                        value="192.168.1.10">
+                                </div>
+                                <div class="col-4">
+                                    <label class="small fw-bold text-muted">Port</label>
+                                    <input type="text" id="cfgServerPort" class="form-control form-control-sm"
+                                        value="5060">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 2. Select Main User -->
+                    <div class="card shadow-sm border-0 mb-3">
+                        <div class="card-header bg-white fw-bold small text-muted text-primary">PHONE OWNER (MAIN LINE)
+                        </div>
+                        <div class="card-body">
+                            <label class="small text-muted mb-1">Select User from Pool</label>
+                            <select class="form-select mb-3" id="mainUserSelect" onchange="setMainUser()">
+                                <option value="">-- Select Owner --</option>
+                            </select>
+
+                            <div id="ownerDetails" class="d-none p-2 bg-light rounded border small">
+                                <strong>Ext:</strong> <span id="ownerExt"></span><br>
+                                <strong>Pass:</strong> <span id="ownerPass"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 3. Key Assignment -->
+                    <div class="card shadow-sm border-0">
+                        <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                            <span class="fw-bold small text-muted">ASSIGNED KEYS</span>
+                            <button class="btn btn-sm btn-outline-primary" onclick="openKeyPicker()">+ Add Keys</button>
+                        </div>
+                        <div class="card-body p-0">
+                            <ul class="list-group list-group-flush" id="assignedKeysList">
+                                <!-- Sortable Keys go here -->
+                            </ul>
+                            <div id="keysEmpty" class="text-center py-3 text-muted small">No keys assigned.</div>
+                        </div>
+                        <div class="card-footer bg-white">
+                            <button class="btn btn-success w-100 fw-bold" onclick="generateConfig()">
+                                <i class="bi bi-download me-2"></i>Generate Config
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- RIGHT: PREVIEW -->
+                <div class="col-lg-5 offset-lg-1">
+                    <div class="sticky-top" style="top: 20px;">
+                        <!-- PHONE CHASSIS (Same as before) -->
+                        <div class="phone-wrapper">
+                            <div class="phone-logo"><i class="bi bi-triangle-fill text-danger me-1"
+                                    style="font-size: 8px; transform: rotate(90deg);"></i>poly</div>
+                            <div class="phone-layout-row">
+                                <div class="physical-col">
+                                    <div class="p-spacer-top"></div>
+                                    <div class="buttons-zone" id="pbtn-left"></div>
+                                    <div class="p-spacer-bottom"></div>
+                                </div>
+
+                                <div class="phone-screen">
+                                    <div class="screen-header">
+                                        <div class="d-flex align-items-center gap-1" id="headerLeft"><span>--</span>
+                                        </div>
+                                        <div class="pagination-overlay" id="pgDots"></div>
+                                        <div id="headerDate">Wed, 14 Jan</div>
+                                    </div>
+                                    <div class="screen-body">
+                                        <div class="grid-lines"></div>
+                                        <div class="screen-col-left" id="previewLeft"></div>
+                                        <div class="screen-col-center">
+                                            <div class="clock-time" id="liveClock">12:00</div>
+                                            <div class="clock-date" id="pgInfo">Page 1</div>
+                                        </div>
+                                        <div class="screen-col-right" id="previewRight"></div>
+                                    </div>
+                                    <div class="screen-footer"><span>New
+                                            Call</span><span>Forward</span><span>DND</span><span>More</span></div>
+                                </div>
+
+                                <div class="physical-col">
+                                    <div class="p-spacer-top"></div>
+                                    <div class="buttons-zone" id="pbtn-right"></div>
+                                    <div class="p-spacer-bottom"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Controls -->
+                        <div class="phone-controls">
+                            <button class="btn btn-light btn-page" onclick="changePage(-1)">Prev</button>
+                            <button class="btn btn-light btn-page" onclick="changePage(1)">Next</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- KEY PICKER MODAL -->
+<div class="modal fade" id="keyPickerModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title fw-bold">Select Users to Add</h6>
+                <div class="form-check me-auto ms-3">
+                    <input class="form-check-input" type="checkbox" id="selectAllKeysCheckbox" onclick="toggleSelectAllKeys()">
+                    <label class="form-check-label small text-muted" for="selectAllKeysCheckbox">
+                        Select All
+                    </label>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-0">
+                <div class="list-group list-group-flush" id="pickerList">
+                    <!-- Checkboxes injected here -->
+                </div>
+            </div>
+            <div class="modal-footer bg-light">
+                <button type="button" class="btn btn-primary fw-bold w-100" onclick="confirmAddKeys()">Add
+                    Selected</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% include 'components/user_modal.html' %}
+{% endblock %}
