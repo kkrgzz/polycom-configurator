@@ -34,18 +34,38 @@
             </div>
 
             <div class="card border-0 shadow-sm">
-                <table class="table table-hover align-middle mb-0" id="userTable">
-                    <thead class="bg-light">
-                        <tr>
-                            <th class="ps-4">Name</th>
-                            <th>Ext</th>
-                            <th>Auth</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="userTableBody"></tbody>
-                </table>
-                <div id="emptyState" class="text-center py-5 d-none text-muted">No users found. Import or Add users.
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0" id="userTable">
+                            <thead class="bg-light text-uppercase small text-muted">
+                                <tr>
+                                    <th class="ps-4" width="5%">
+                                        <input type="checkbox" id="selectAllCheckbox" title="Select All">
+                                    </th>
+                                    <th width="25%">Display Name</th>
+                                    <th width="15%">Extension</th>
+                                    <th width="20%">Password (Secret)</th>
+                                    <th width="20%">Label (Optional)</th>
+                                    <th class="text-end pe-4" width="15%">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="userTableBody">
+                                <!-- Rows injected by JS -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Empty State -->
+                    <div id="emptyState" class="text-center py-5 d-none">
+                        <div class="text-muted mb-3"><i class="bi bi-inbox fs-1"></i></div>
+                        <h6 class="text-muted">No users found. Import or Add users.</h6>
+                    </div>
+                </div>
+                <div class="card-footer bg-white small text-muted d-flex justify-content-between align-items-center">
+                    <span>Total Users: <span id="userCount">0</span></span>
+                    <button id="deleteSelectedBtn" class="btn btn-sm btn-danger" style="display: none;">
+                        <i class="bi bi-trash me-1"></i>Delete Selected (<span id="selectedCount">0</span>)
+                    </button>
                 </div>
             </div>
         </div>

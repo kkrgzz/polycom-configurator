@@ -1,67 +1,4 @@
-{% block content %}
-<div class="container-fluid">
-    
-    <!-- TOOLBAR -->
-    <div class="d-flex justify-content-between align-items-center mb-4 p-3 bg-white rounded shadow-sm">
-        <h4 class="mb-0 fw-bold text-primary"><i class="bi bi-people-fill me-2"></i>User Pool Manager</h4>
-        
-        <div class="d-flex gap-2">
-            <!-- Hidden file input for import -->
-            <input type="file" id="importFile" accept=".json" style="display: none;" onchange="importUsers(this)">
-            
-            <button class="btn btn-outline-dark" onclick="document.getElementById('importFile').click()">
-                <i class="bi bi-upload me-2"></i>Import Pool
-            </button>
-            
-            <button class="btn btn-outline-dark" onclick="exportUsers()">
-                <i class="bi bi-download me-2"></i>Export Pool
-            </button>
-            
-            <button class="btn btn-primary fw-bold px-4" onclick="openModal()">
-                <i class="bi bi-plus-lg me-2"></i>Add User
-            </button>
-        </div>
-    </div>
-
-    <!-- DATA TABLE -->
-    <div class="card shadow-sm border-0">
-        <div class="card-body p-0">
-            <div class="table-responsive">
-                <table class="table table-hover align-middle mb-0" id="userTable">
-                    <thead class="bg-light text-uppercase small text-muted">
-                        <tr>
-                            <th class="ps-4" width="5%">
-                                <input type="checkbox" id="selectAllCheckbox" title="Select All">
-                            </th>
-                            <th width="25%">Display Name</th>
-                            <th width="15%">Extension</th>
-                            <th width="20%">Password (Secret)</th>
-                            <th width="20%">Label (Optional)</th>
-                            <th class="text-end pe-4" width="15%">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="userTableBody">
-                        <!-- Rows injected by JS -->
-                    </tbody>
-                </table>
-            </div>
-            
-            <!-- Empty State -->
-            <div id="emptyState" class="text-center py-5 d-none">
-                <div class="text-muted mb-3"><i class="bi bi-inbox fs-1"></i></div>
-                <h6 class="text-muted">No users found. Add a user or import a pool.</h6>
-            </div>
-        </div>
-        <div class="card-footer bg-white small text-muted d-flex justify-content-between align-items-center">
-            <span>Total Users: <span id="userCount">0</span></span>
-            <button id="deleteSelectedBtn" class="btn btn-sm btn-danger" style="display: none;">
-                <i class="bi bi-trash me-1"></i>Delete Selected (<span id="selectedCount">0</span>)
-            </button>
-        </div>
-    </div>
-</div>
-
-<!-- ADD/EDIT MODAL -->
+<!-- ADD/EDIT USER MODAL -->
 <div class="modal fade" id="userModal" tabindex="-1" data-bs-backdrop="static">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -72,12 +9,12 @@
             <div class="modal-body">
                 <form id="userForm">
                     <input type="hidden" id="userId">
-                    
+
                     <div class="mb-3">
                         <label class="form-label small fw-bold text-muted">Display Name</label>
                         <input type="text" class="form-control" id="userName" required placeholder="e.g. John Doe">
                     </div>
-                    
+
                     <div class="row g-3">
                         <div class="col-md-6">
                             <label class="form-label small fw-bold text-muted">Extension / User ID</label>
@@ -103,4 +40,3 @@
         </div>
     </div>
 </div>
-{% endblock %}
