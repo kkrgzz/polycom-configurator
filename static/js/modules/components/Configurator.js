@@ -189,10 +189,25 @@ class Configurator {
      * @returns {Object} Server config
      */
     getServerConfig() {
+        const ntpServerInput = document.getElementById('cfgNtpServer');
         return {
             ip: this.serverIpInput?.value || '192.168.1.10',
             port: this.serverPortInput?.value || '5060',
-            ntp_server: 'pool.ntp.org'
+            ntp_server: ntpServerInput?.value || 'pool.ntp.org'
+        };
+    }
+
+    /**
+     * Get phone settings configuration
+     * @returns {Object} Phone settings config
+     */
+    getPhoneSettings() {
+        const paginationSelect = document.getElementById('cfgPagination');
+        const spontaneousCallsSelect = document.getElementById('cfgSpontaneousCalls');
+
+        return {
+            pagination: paginationSelect?.value || 'enabled',
+            spontaneous_calls: spontaneousCallsSelect?.value || 'enabled'
         };
     }
 }

@@ -290,7 +290,8 @@ class App {
             const payload = {
                 server_config: this.configurator.getServerConfig(),
                 user_config: owner,
-                attendants: blfList
+                attendants: blfList,
+                phone_settings: this.configurator.getPhoneSettings()
             };
 
             // Generate and download

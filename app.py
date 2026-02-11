@@ -47,15 +47,19 @@ def generate_xml():
     """
     try:
         req_data = request.json
-        
+
         server_config = req_data.get('server_config', {})
         user_config = req_data.get('user_config', {})
         attendants = req_data.get('attendants', [])
+        phone_settings = req_data.get('phone_settings', {})
 
         # 1. Start XML Construction
         root = ET.Element("polycomConfig")
-        ET.SubElement(root, "up", {"up.Pagination.enabled": "1"})
-        
+
+        # Pagination setting (enabled/disabled from Settings tab)
+        pagination_enabled = "1" if phone_settings.get('pagination', 'enabled') == 'enabled' else "0"
+        ET.SubElement(root, "up", {"up.Pagination.enabled": pagination_enabled})
+
         # 2. Server & NTP
         ET.SubElement(root, "tcpIpApp.sntp", {
             "tcpIpApp.sntp.address": server_config.get('ntp_server', 'pool.ntp.org'),
@@ -80,9 +84,12 @@ def generate_xml():
         })
 
         # 4. Attendants (BLF Keys)
+        # Spontaneous Call Appearances setting (enabled=1, disabled=0)
+        spontaneous_calls = "1" if phone_settings.get('spontaneous_calls', 'enabled') == 'enabled' else "0"
+
         att_attrs = {
-            "attendant.reg": "1", 
-            "attendant.behaviors.display.spontaneousCallAppearances.normal": "0"
+            "attendant.reg": "1",
+            "attendant.behaviors.display.spontaneousCallAppearances.normal": spontaneous_calls
         }
         
         for i, att in enumerate(attendants):
