@@ -1,0 +1,10 @@
+# Polycom Configurator - Python Dependencies
+
+# Web Framework
+Flask==3.0.0
+
+# Image Processing (for logo display in Tkinter)
+Pillow==10.2.0
+
+# For building executable
+pyinstaller==6.3.0
